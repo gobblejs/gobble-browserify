@@ -1,4 +1,4 @@
-# gobble-sass
+# gobble-browserify
 
 Bundle CommonJS modules with gobble and Browserify
 
