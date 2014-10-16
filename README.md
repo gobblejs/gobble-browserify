@@ -1,4 +1,4 @@
-# gobble-sass
+# gobble-browserify
 
 Bundle CommonJS modules with gobble and Browserify
 
@@ -12,14 +12,17 @@ npm i -D gobble-browserify
 
 ## Usage
 
+Given a file src/js/app.js that includes browserify-type require() statements in it:
+
 ```js
 var gobble = require( 'gobble' );
 module.exports = gobble( 'src' ).transform( 'browserify', {
-  entries: 'js/app.scss', // can be string or array
+  entries: './js/app.js', // can be string or array, with files relative to the 'src' directory
   dest: 'bundle.js'
 });
 ```
 
+During debugging, running "gobble" will display error messages from Browserify (unlike "gobble build dist" which swallows error messages).
 
 ## License
 
