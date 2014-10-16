@@ -1,11 +1,11 @@
 {
   "name": "gobble-browserify",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Bundle CommonJS modules with gobble and Browserify",
   "author": "Rich Harris",
   "dependencies": {
     "browserify": "^5.11.2",
-    "sander": "^0.1.1"
+    "sander": "^0.1.6"
   },
   "keywords": [
     "gobble"

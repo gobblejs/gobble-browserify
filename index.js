@@ -1,4 +1,4 @@
-module.exports = function browserify ( inputdir, outputdir, options, callback, errback ) {
+module.exports = function browserify ( inputdir, outputdir, options, callback ) {
 	var sander = require( 'sander' ),
 		_browserify = require( 'browserify' ),
 		b,
@@ -19,9 +19,9 @@ module.exports = function browserify ( inputdir, outputdir, options, callback, e
 
 	b.bundle( function ( err, buffer ) {
 		if ( err ) {
-			return errback( err );
+			return callback( err );
 		}
 
-		sander.writeFile( outputdir, options.dest, buffer ).then( callback, errback );
+		sander.writeFile( outputdir, options.dest, buffer ).then( callback, callback );
 	});
 };
