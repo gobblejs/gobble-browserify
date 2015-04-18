@@ -1,10 +1,8 @@
-module.exports = function browserify ( inputdir, outputdir, options, callback ) {
-	var sander = require( 'sander' ),
-		_browserify = require( 'browserify' ),
-		b,
-		stream,
-		dest;
+var _browserify = require( 'browserify' );
+var join = require( 'path' ).join;
+var fs = require( 'fs' );
 
+module.exports = function browserify ( inputdir, outputdir, options, callback ) {
 	if ( !options.dest ) {
 		throw new Error( 'You must specify a `dest` property' );
 	}
@@ -15,13 +13,11 @@ module.exports = function browserify ( inputdir, outputdir, options, callback ) 
 
 	options.basedir = inputdir;
 
-	b = _browserify( options );
-
-	b.bundle( function ( err, buffer ) {
+	_browserify( options ).bundle( function ( err, buffer ) {
 		if ( err ) {
 			return callback( err );
 		}
 
-		sander.writeFile( outputdir, options.dest, buffer ).then( callback, callback );
+		fs.writeFile( join( outputdir, options.dest ), buffer, callback );
 	});
 };
