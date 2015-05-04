@@ -16,7 +16,7 @@ module.exports = function browserify ( inputdir, outputdir, options, callback ) 
 	var b = _browserify( options );
 	
 	if ( options.ignore ) {
-		browserify.ignore( options.ignore );
+		b.ignore( options.ignore );
 	}
 
 	b.bundle( function ( err, buffer ) {
