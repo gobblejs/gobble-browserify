@@ -1,6 +1,18 @@
 var _browserify = require( 'browserify' );
-var join = require( 'path' ).join;
+var path = require( 'path' );
 var fs = require( 'fs' );
+
+function ensureArray ( thing ) {
+	if ( thing == null ) {
+		return [];
+	}
+
+	if ( !Array.isArray( thing ) ) {
+		return [ thing ];
+	}
+
+	return thing;
+}
 
 module.exports = function browserify ( inputdir, outputdir, options, callback ) {
 	if ( !options.dest ) {
@@ -12,18 +24,38 @@ module.exports = function browserify ( inputdir, outputdir, options, callback ) 
 	}
 
 	options.basedir = inputdir;
-	
+
 	var b = _browserify( options );
-	
-	if ( options.ignore ) {
-		b.ignore( options.ignore );
+
+	// make it possible to expose particular files, without the nutty API.
+	// Example:
+	//     gobble( 'browserify', {
+	//       entries: [ './app' ],
+	//       dest: 'app.js',
+	//       standalone: 'app',
+	//       expose: { ractive: 'ractive/ractive-legacy.js' }  // <-- use ractive-legacy instead of modern build
+	//     })
+	if ( options.expose ) {
+		Object.keys( options.expose ).forEach( function ( moduleName ) {
+			b.require( options.expose[ moduleName ], { expose: moduleName });
+		});
 	}
 
-	b.bundle( function ( err, buffer ) {
-		if ( err ) {
-			return callback( err );
-		}
-
-		fs.writeFile( join( outputdir, options.dest ), buffer, callback );
+	// allow ignore and exclude to be passed as arrays/strings, rather
+	// than having to use options.configure
+	[ 'ignore', 'exclude' ].forEach( function ( method ) {
+		ensureArray( options[ method ] ).forEach( function ( option ) {
+			b[ method ]( option );
+		});
 	});
+
+	if ( options.configure ) {
+		options.configure( b );
+	}
+
+	var stream = b.bundle();
+	stream.on( 'error', callback );
+	stream.on( 'end', callback );
+
+	stream.pipe( fs.createWriteStream( path.join( outputdir, options.dest ) ) );
 };
