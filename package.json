@@ -1,12 +1,12 @@
 {
   "name": "gobble-browserify",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Bundle CommonJS modules with gobble and Browserify",
   "author": "Rich Harris",
   "license": "MIT",
   "repository": "https://github.com/gobblejs/gobble-browserify",
   "dependencies": {
-    "browserify": "^9.0.0"
+    "browserify": "^10.1.0"
   },
   "keywords": [
     "gobble"
