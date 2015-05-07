@@ -2,6 +2,10 @@ var _browserify = require( 'browserify' );
 var path = require( 'path' );
 var fs = require( 'fs' );
 
+var SOURCEMAPPING_URL = 'sourceMa';
+SOURCEMAPPING_URL += 'ppingURL';
+var SOURCEMAP_COMMENT = new RegExp( '\\/\\/[#@]\\s+' + SOURCEMAPPING_URL + '=([^\\s\'"]+)\s*$', 'gm' );
+
 function ensureArray ( thing ) {
 	if ( thing == null ) {
 		return [];
@@ -36,6 +40,7 @@ module.exports = function browserify ( inputdir, outputdir, options, callback ) 
 	}
 
 	options.basedir = inputdir;
+	var debug = options.debug = options.debug !== false; // sourcemaps by default
 
 	var b = _browserify( options );
 
@@ -65,27 +70,25 @@ module.exports = function browserify ( inputdir, outputdir, options, callback ) 
 		options.configure( b );
 	}
 
-	var stream = b.bundle();
-	stream.on( 'error', callback );
+	b.bundle( function ( err, bundle ) {
+		if ( err ) return callback( err );
 
-	var dest = path.join( outputdir, options.dest );
+		bundle = bundle.toString();
 
-	if ( options.debug ) {
-		// we're expecting a base64-encoded sourcemap. Unfortunately, the sourcemap
-		// browserify generates contains paths that are relative to `inputdir`, when
-		// they should be relative to `outputdir`. To my knowledge, there's no way
-		// to correct that, so we intercept the sourcemap ourselves. It's frustrating
-		// that browserify won't allow you to generate a sourcemap separately, but whatever
-		concat( stream, function ( bundle ) {
-			var index = bundle.lastIndexOf( '//# sourceMappingURL=' );
+		var dest = path.join( outputdir, options.dest );
+		var lastSourceMappingURL;
 
-			if ( !~index ) {
-				// huh, weird
-				return fs.writeFile( dest, bundle, callback );
-			}
+		// browserify leaves sourceMappingURL comments in the files it bundles. This is
+		// incorrect, as browsers (and other sourcemap tools) will assume that the URL
+		// is for the bundle's own map, whether or not there is one. So we remove them,
+		// and store the value of the last one in case we need to process it
+		bundle = bundle.replace( SOURCEMAP_COMMENT, function ( match, url, a ) {
+			lastSourceMappingURL = url;
+			return '';
+		});
 
-			var dataURL = bundle.substring( index + 21 );
-			var base64Match = /base64,(.+)/.exec( dataURL );
+		if ( debug && lastSourceMappingURL ) {
+			var base64Match = /base64,(.+)/.exec( lastSourceMappingURL );
 
 			if ( !base64Match ) {
 				callback( new Error( 'Expected to find a base64-encoded sourcemap data URL' ) );
@@ -105,17 +108,13 @@ module.exports = function browserify ( inputdir, outputdir, options, callback ) 
 
 			// we write the sourcemap out as a separate .map file. Keeping it as an
 			// inline data URL is silly
-			bundle = bundle.substr( 0, index ) + '//# sourceMappingURL=' + path.basename( mapFile );
+			bundle += '\n//# sourceMappingURL=' + path.basename( mapFile );
 
 			fs.writeFile( dest, bundle, function () {
 				fs.writeFile( mapFile, JSON.stringify( map ), callback );
 			});
-		});
-	}
-
-	else {
-		// no sourcemap expected - pipe bundle straight to the file system
-		stream.pipe( fs.createWriteStream( dest ) );
-		stream.on( 'end', callback );
-	}
+		} else {
+			fs.writeFile( dest, bundle, callback );
+		}
+	});
 };
