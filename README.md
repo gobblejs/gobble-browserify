@@ -23,6 +23,9 @@ module.exports = gobble( 'src' ).transform( 'browserify', {
   // The file that will be generated
   dest: 'bundle.js',
 
+  // Whether to generate sourcemaps (defaults to true)
+  debug: false,
+
   // If supplied, this function will be called with the
   // bundle object for advanced configuration, e.g. transforms
   configure: function ( bundle ) {
