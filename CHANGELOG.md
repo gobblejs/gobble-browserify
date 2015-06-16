@@ -1,5 +1,9 @@
 # changelog
 
+## 0.6.1
+
+* Defensively clone dependencies before caching them - fixes bug with browserify 10.2.x
+
 ## 0.6.0
 
 * Use browserify's package caching mechanism for much faster incremental rebuilds

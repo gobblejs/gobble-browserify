@@ -1,6 +1,6 @@
 {
   "name": "gobble-browserify",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Bundle CommonJS modules with gobble and Browserify",
   "author": "Rich Harris",
   "license": "MIT",
