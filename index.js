@@ -18,18 +18,6 @@ function ensureArray ( thing ) {
 	return thing;
 }
 
-function concat ( stream, callback ) {
-	var body = '';
-
-	stream.on( 'data', function ( chunk ) {
-		body += chunk.toString();
-	});
-
-	stream.on( 'end', function () {
-		callback( body );
-	});
-}
-
 function cacheDependency ( cache, originalDep, inputdir ) {
 	var dep = {};
 	Object.keys( originalDep ).forEach( function ( key ) {
@@ -154,7 +142,7 @@ module.exports = function browserify ( inputdir, outputdir, options, callback ) 
 		// incorrect, as browsers (and other sourcemap tools) will assume that the URL
 		// is for the bundle's own map, whether or not there is one. So we remove them,
 		// and store the value of the last one in case we need to process it
-		bundle = bundle.replace( SOURCEMAP_COMMENT, function ( match, url, a ) {
+		bundle = bundle.replace( SOURCEMAP_COMMENT, function ( match, url ) {
 			lastSourceMappingURL = url;
 			return '';
 		});

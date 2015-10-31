@@ -48,6 +48,19 @@ module.exports = gobble( 'src' ).transform( 'browserify', {
 });
 ```
 
+## Testing
+
+To run a single test:
+
+```bash
+npm test
+```
+
+To run a continuous test that watches the source file and test cases for changes:
+
+```bash
+npm start
+```
 
 ## License
 
