@@ -1,5 +1,9 @@
 # changelog
 
+## 13.0.0
+
+* Update browserify (and start syncing versions)
+
 ## 0.6.1
 
 * Defensively clone dependencies before caching them - fixes bug with browserify 10.2.x
