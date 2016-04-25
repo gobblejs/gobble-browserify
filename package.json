@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": "https://github.com/gobblejs/gobble-browserify",
   "dependencies": {
-    "browserify": "^10.1.0"
+    "browserify": "^13.0.0"
   },
   "keywords": [
     "gobble"
