@@ -5,6 +5,11 @@
   "author": "Rich Harris",
   "license": "MIT",
   "repository": "https://github.com/gobblejs/gobble-browserify",
+  "scripts": {
+    "lint": "eslint index.js test/",
+    "start": "npm run -s test; chokidar 'index.js' 'test/test.js' -i 'test/.gobble' -i 'test/dist' -c 'npm run -s test'",
+    "test": "mocha test/test.js"
+  },
   "dependencies": {
     "browserify": "^13.0.0"
   },
@@ -13,5 +18,15 @@
   ],
   "files": [
     "index.js"
-  ]
+  ],
+  "devDependencies": {
+    "chai": "^3.4.0",
+    "chokidar-cli": "^1.1.1",
+    "eslint": "^1.8.0",
+    "eslint-cli": "^0.2.0",
+    "gobble": "^0.10.2",
+    "mocha": "^2.3.3",
+    "sander": "^0.4.0",
+    "source-map": "^0.5.3"
+  }
 }
